@@ -2,8 +2,8 @@
 TGT := ofxparse
 OCAMLC := ocamlc -annot -g -w Aez -warn-error A
 
-$(TGT): eval.cmo parser.cmo lexer.cmo main.ml
-	$(OCAMLC) -o $@ ast.ml eval.ml parser.ml lexer.ml main.ml
+$(TGT): dump.cmo parser.cmo lexer.cmo main.ml
+	$(OCAMLC) -o $@ ast.ml dump.ml parser.ml lexer.ml main.ml
 
 lexer.ml: lexer.mll
 	ocamllex $<
@@ -11,13 +11,13 @@ lexer.ml: lexer.mll
 parser.ml: parser.mly
 	ocamlyacc $<
 
-eval.cmo eval.cmi: ast.cmi eval.ml
-	$(OCAMLC) -c eval.ml
+dump.cmo dump.cmi: ast.cmi dump.ml
+	$(OCAMLC) -c dump.ml
 
 ast.cmo ast.cmi: ast.ml
 	$(OCAMLC) -c ast.ml
 
-parser.cmo parser.cmi: eval.cmi ast.cmi parser.ml
+parser.cmo parser.cmi: dump.cmi ast.cmi parser.ml
 	$(OCAMLC) -c parser.mli parser.ml
 
 lexer.cmo: parser.cmi lexer.ml

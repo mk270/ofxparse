@@ -30,7 +30,7 @@ let main debug =
 
     let dump_parsed lx =
       let parsed = parse lx in
-        Eval.dump_registry parsed |> print_endline
+        Dump.dump_registry parsed |> print_endline
     in
 
       [
