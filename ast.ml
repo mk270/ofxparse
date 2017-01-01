@@ -1,10 +1,12 @@
 
 type ident = Ident of string
 
-type t =
-  | Header of (ident * string)
+type tag =
   | Tag of ident
   | End_tag of ident
+
+type t =
+  | Header of (ident * string)
   | Eof
   | Cons of (t * t)
   | Kvp of (ident * string)

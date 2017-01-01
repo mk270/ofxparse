@@ -53,10 +53,6 @@ ident:
 node:
   | open_tag node_contents close_tag { $2 }
 ;
-tag:
-  | open_tag  { print_endline "<tag>"; $1 }
-  | close_tag { print_endline "</tag>"; $1 }
-;
 open_tag:
   | TAG GT    { Tag     (Ident $1) }
 ;
