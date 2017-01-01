@@ -43,7 +43,7 @@ and identifier_token opening = parse
 
 and header_token = parse
   | [' ' '\t']	       { header_token lexbuf }
-  | "\n\n"             { EOF }
+  | "\n\n"             { incr_lineno lexbuf; incr_lineno lexbuf; EOF }
   | '\n'		       { incr_lineno lexbuf; header_token lexbuf }
   | ':'                { header_value lexbuf }
   | identifier as id   { IDENTIFIER id }
