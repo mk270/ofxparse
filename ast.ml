@@ -13,7 +13,6 @@ type header =
 type t =
   | Headers of header list
   | Eof
-  | Cons of (t * t)
   | Root_node of node
 and node = {
   tag_name : tag;

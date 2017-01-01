@@ -18,11 +18,6 @@ let map_car f xx =
 let rec registry = function
   | Headers hh -> map_car header hh
 
-  | Cons (car, cdr) -> 
-     let car' = registry car in
-     let cdr' = registry cdr in
-       sprintf "[%s %s]" car' cdr'
-
   | Eof -> "EOF"
 
   | Root_node n -> node n

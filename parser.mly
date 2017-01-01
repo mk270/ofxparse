@@ -36,8 +36,8 @@ let parse_error s = Printf.printf "Parse error: %s\n" s
 %%
 input:
    | EOF { Eof } 
-   | headers input { Cons (Headers $1, $2) }
-   | node   input { Cons (Root_node $1, $2) }
+   | headers input { Headers $1 }
+   | node   input { Root_node $1 }
 ;
 headers:
    | header { [ $1 ] }
