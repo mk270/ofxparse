@@ -7,8 +7,11 @@ type tag =
   | Tag of ident
   | End_tag of ident
 
-type t =
+type header =
   | Header of tuple
+
+type t =
+  | Headers of header list
   | Eof
   | Cons of (t * t)
   | Kvp of tuple

@@ -1,9 +1,13 @@
 
 open Ast
 
-let rec dump_registry = function
+
+let dump_header = function
   | Header (i, s) ->
      "header (" ^ string_of_ident i ^ ": " ^ s ^ ")"
+
+let rec dump_registry = function
+  | Headers hh -> List.map dump_header hh |> List.fold_left (^) ""
   | Cons (car, cdr) -> 
      "cons (" ^ dump_registry car ^ ", " ^ dump_registry cdr ^ " )"
   | Eof -> "EOF"

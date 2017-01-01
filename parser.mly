@@ -36,8 +36,12 @@ let parse_error s = Printf.printf "Parse error: %s\n" s
 %%
 input:
    | EOF { Eof } 
-   | header input { Cons ($1, $2) }
+   | headers input { Cons (Headers $1, $2) }
    | node   input { Cons ($1, $2) }
+;
+headers:
+   | header { [ $1 ] }
+   | header headers { $1 :: $2 }
 ;
 header:
    | ident COLON num { Header ($1, $3) }
