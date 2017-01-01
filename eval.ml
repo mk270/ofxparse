@@ -16,15 +16,24 @@ let map_car f xx =
 
 let rec dump_registry = function
   | Headers hh -> map_car dump_header hh
+
   | Cons (car, cdr) -> 
-     "cons (" ^ dump_registry car ^ ", " ^ dump_registry cdr ^ " )"
+     let car' = dump_registry car in
+     let cdr' = dump_registry cdr in
+     "[" ^ car' ^ ", " ^ cdr' ^ " ]"
+
   | Eof -> "EOF"
+
   | Root_node n -> dump_node n
+
 and dump_node_contents = function
   | Kvp (i, s) ->
-     "KVP (" ^ string_of_ident i ^ ": " ^ s ^ ")"
+     let i' = string_of_ident i in
+       "(" ^ i' ^ " . " ^ s ^ ")"
+
   | Node n -> dump_node n
+
 and dump_node node =
-  "Node(" ^ (dump_tag node.tag_name) ^ ": " ^
-    (map_car dump_node_contents node.node_contents)
-  ^ ")"
+  let t = dump_tag node.tag_name in
+  let c = map_car dump_node_contents node.node_contents in
+    "Node(" ^ t ^ ": " ^ c ^ ")"
