@@ -47,9 +47,6 @@ and header_token = parse
   | '\n'		       { incr_lineno lexbuf; header_token lexbuf }
   | ':'                { COLON }
   | identifier as id   { IDENTIFIER id }
-  | '<' { LT }
-  | '>' { GT }
-  | '/' { SLASH }
   | nonnlorcolon + as cd { CDATA cd }
   | _ { raise Unexpected_token }
   | eof		{ EOF }
