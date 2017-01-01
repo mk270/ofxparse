@@ -44,12 +44,8 @@ headers:
    | header headers { $1 :: $2 }
 ;
 header:
-   | ident COLON num { Header ($1, $3) }
    | ident COLON ident { Header ($1, "$3") }
    | ident COLON cdata_header { Header ($1, $3) }
-;
-num:
-   | NUM { "NuM" }
 ;
 ident:
    | IDENTIFIER { Ident $1 }
