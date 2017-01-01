@@ -7,7 +7,6 @@ let rec dump_registry = function
   | Cons (car, cdr) -> 
      "cons (" ^ dump_registry car ^ ", " ^ dump_registry cdr ^ " )"
   | Eof -> "EOF"
-  | CData _ -> "[CDATA]"
   | Tag s     -> "Tag_(" ^ (string_of_ident s) ^ ")\n"
   | End_tag s -> "/Tag(" ^ (string_of_ident s) ^ ")"
   | Kvp (i, s) ->

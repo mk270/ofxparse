@@ -66,9 +66,6 @@ close_tag:
 cdata_header:
   | CDATA { $1 }
 ;
-cdata:
-  | CDATA { CData $1 }
-;
 unclosed_node:
   | TAG GT CDATA { Kvp (Ident $1, $3) }
 ;

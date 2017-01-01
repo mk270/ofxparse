@@ -5,7 +5,6 @@ type t =
   | Header of (ident * string)
   | Tag of ident
   | End_tag of ident
-  | CData of string
   | Eof
   | Cons of (t * t)
   | Kvp of (ident * string)
