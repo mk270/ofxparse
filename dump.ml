@@ -1,14 +1,15 @@
 
 open Ast
-
+open Printf
 
 let header = function
   | Header (i, s) ->
-     "header (" ^ string_of_ident i ^ ": " ^ s ^ ")"
+     let i' = string_of_ident i in
+       sprintf "(header %s %s)" i' s
 
 let tag = function
-  | Tag s     -> "Tag_(" ^ (string_of_ident s) ^ ")\n"
-  | End_tag s -> "/Tag(" ^ (string_of_ident s) ^ ")"
+  | Tag s     -> string_of_ident s |> sprintf "(tag %s)"
+  | End_tag s -> string_of_ident s |> sprintf "(/tag %s)"
 
 let map_car f xx =
   let concat_with_comma x y = x ^ ", " ^ y in
@@ -20,7 +21,7 @@ let rec registry = function
   | Cons (car, cdr) -> 
      let car' = registry car in
      let cdr' = registry cdr in
-     "[" ^ car' ^ ", " ^ cdr' ^ " ]"
+       sprintf "[%s %s]" car' cdr'
 
   | Eof -> "EOF"
 
@@ -29,11 +30,11 @@ let rec registry = function
 and node_contents = function
   | Kvp (i, s) ->
      let i' = string_of_ident i in
-       "(" ^ i' ^ " . " ^ s ^ ")"
+       sprintf "(%s . %s)" i' s
 
   | Node n -> node n
 
 and node node =
   let t = tag node.tag_name in
   let c = map_car node_contents node.node_contents in
-    "Node(" ^ t ^ ": " ^ c ^ ")"
+    sprintf "(node %s %s)" t c

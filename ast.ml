@@ -24,5 +24,5 @@ and node_contents =
   | Node of node
 
 let string_of_ident = function
-	| Ident s -> "$" ^ s
+	| Ident s -> s
 
