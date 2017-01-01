@@ -45,32 +45,32 @@ header:
    | ident COLON cdata_header { Header ($1, $3) }
 ;
 num:
-  | NUM { "NuM" }
+   | NUM { "NuM" }
 ;
 ident:
-  | IDENTIFIER { Ident $1 }
+   | IDENTIFIER { Ident $1 }
 ;
 node:
-  | open_tag node_contents close_tag { $2 }
+   | open_tag node_contents close_tag { $2 }
 ;
 open_tag:
-  | TAG GT    { Tag     (Ident $1) }
+   | TAG GT    { Tag     (Ident $1) }
 ;
 close_tag:
-  | ENDTAG GT { End_tag (Ident $1) }
+   | ENDTAG GT { End_tag (Ident $1) }
 ;
 cdata_header:
-  | CDATA { $1 }
+   | CDATA { $1 }
 ;
 unclosed_node:
-  | TAG GT CDATA { Kvp (Ident $1, $3) }
+   | TAG GT CDATA { Kvp (Ident $1, $3) }
 ;
 
 node_contents:
-  | node_content node_contents { Cons ($1, $2) }
-  | node_content { $1 }
+   | node_content node_contents { Cons ($1, $2) }
+   | node_content { $1 }
 ;
 node_content:
-  | node { $1 }
-  | unclosed_node { $1 }
+   | node { $1 }
+   | unclosed_node { $1 }
 ;
