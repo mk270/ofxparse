@@ -45,9 +45,10 @@ and header_token = parse
   | [' ' '\t']	       { header_token lexbuf }
   | "\n\n"             { EOF }
   | '\n'		       { incr_lineno lexbuf; header_token lexbuf }
-  | ':'                { COLON }
+  | ':'                { header_value lexbuf }
   | identifier as id   { IDENTIFIER id }
-  | nonnlorcolon + as cd { CDATA cd }
   | _ { raise Unexpected_token }
   | eof		{ EOF }
 
+and header_value = parse
+  | nonnlorcolon + as cd { HEADER_DATA cd }

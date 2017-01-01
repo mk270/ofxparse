@@ -10,24 +10,14 @@ let parse_error s = Printf.printf "Parse error: %s\n" s
 
 /* Ocamlyacc Declarations */
 %token NEWLINE
-%token LPAREN RPAREN
-%token <Big_int.big_int> NUM
-%token <string> STRING
-%token LBRACE RBRACE
 %token <string> IDENTIFIER
 %token <string> TAG
 %token <string> ENDTAG
 %token EOF
-%token COMMA
-%token COLON
 %token LT GT
 %token SLASH
 %token <string> CDATA
-
-%left PLUS MINUS
-%left MULTIPLY
-%left COMMA
-%right CARET	/* exponentiation */
+%token <string> HEADER_DATA
 
 %start input
 %type <Ast.t> input
@@ -44,8 +34,7 @@ headers:
    | header headers { $1 :: $2 }
 ;
 header:
-   | ident COLON ident { Header ($1, "$3") }
-   | ident COLON cdata_header { Header ($1, $3) }
+   | ident cdata_header { Header ($1, $2) }
 ;
 ident:
    | IDENTIFIER { Ident $1 }
@@ -63,7 +52,7 @@ close_tag:
    | ENDTAG GT { End_tag (Ident $1) }
 ;
 cdata_header:
-   | CDATA { $1 }
+   | HEADER_DATA { $1 }
 ;
 unclosed_node:
    | TAG GT CDATA { Kvp (Ident $1, $3) }
