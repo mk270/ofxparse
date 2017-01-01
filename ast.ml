@@ -14,7 +14,14 @@ type t =
   | Headers of header list
   | Eof
   | Cons of (t * t)
+  | Root_node of node
+and node = {
+  tag_name : tag;
+  node_contents : node_contents list
+} 
+and node_contents =
   | Kvp of tuple
+  | Node of node
 
 let string_of_ident = function
 	| Ident s -> "$" ^ s

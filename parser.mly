@@ -37,7 +37,7 @@ let parse_error s = Printf.printf "Parse error: %s\n" s
 input:
    | EOF { Eof } 
    | headers input { Cons (Headers $1, $2) }
-   | node   input { Cons ($1, $2) }
+   | node   input { Cons (Root_node $1, $2) }
 ;
 headers:
    | header { [ $1 ] }
@@ -55,7 +55,10 @@ ident:
    | IDENTIFIER { Ident $1 }
 ;
 node:
-   | open_tag node_contents close_tag { $2 }
+   | open_tag node_contents close_tag { 
+     (* check tags match *)
+     { tag_name = $1; node_contents = $2 }
+   }
 ;
 open_tag:
    | TAG GT    { Tag     (Ident $1) }
@@ -71,10 +74,10 @@ unclosed_node:
 ;
 
 node_contents:
-   | node_content node_contents { Cons ($1, $2) }
-   | node_content { $1 }
+   | node_content node_contents { $1 :: $2 }
+   | node_content { [ $1 ] }
 ;
 node_content:
-   | node { $1 }
+   | node { Node $1 }
    | unclosed_node { $1 }
 ;
