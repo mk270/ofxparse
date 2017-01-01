@@ -35,7 +35,7 @@ rule token = parse
   | _               { raise Unexpected_token }
   | eof		        { EOF }
 and identifier_token opening = parse
-  | identifier as id   { 
+  | identifier as id   {
     if opening
     then TAG id
     else ENDTAG id
