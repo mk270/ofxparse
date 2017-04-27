@@ -10,11 +10,7 @@ type tag =
 type header =
   | Header of tuple
 
-type t =
-  | Headers of header list
-  | Eof
-  | Root_node of node
-and node = {
+type node = {
   tag_name : tag;
   node_contents : node_contents list
 } 
@@ -22,6 +18,14 @@ and node_contents =
   | Kvp of tuple
   | Node of node
 
+type t =
+  | Headers of header list
+  | Eof
+  | Root_node of node
+
 let string_of_ident = function
 	| Ident s -> s
 
+let string_of_tag = function
+  | Tag (Ident i) -> i
+  | End_tag _ -> assert false

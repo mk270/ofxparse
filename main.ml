@@ -1,3 +1,6 @@
+open Ast
+
+exception Wrong_tag of (string * string)
 
 let main debug =
 	let _ = Parsing.set_trace debug in
@@ -28,17 +31,82 @@ let main debug =
 			failwith "lexer error"
 	in
 
-    let dump_parsed lx =
-      let parsed = parse lx in
-        Dump.registry parsed |> print_endline;
-        print_endline "-----"
+    let assert_tag_name node expected_name =
+      let observed_name = string_of_tag node.tag_name in
+        if observed_name = expected_name
+        then ()
+        else raise (Wrong_tag (observed_name, expected_name))
     in
 
-      [
-        Lexer.header_token;
-        Lexer.token;
-      ]
-      |> List.map dump_parsed
+    let rec visit_banktran = function
+      | Node elt ->
+         (assert (string_of_tag elt.tag_name = "STMTTRN");
+          elt.node_contents)
+      | Kvp x -> Dump.tuple x |> print_endline ; []
+    and visit_banktranlist = function
+      | [] -> []
+      | hd :: tl -> visit_banktran hd :: visit_banktranlist tl
+    in
+
+    let rec visit_stmtr = function
+      | Node elt ->
+         (match (string_of_tag elt.tag_name) with
+           | "BANKTRANLIST" -> visit_banktranlist elt.node_contents
+           | "LEDGERBAL"
+           | "BANKACCTFROM" -> []
+           | s -> print_endline s; assert false)
+      | Kvp x -> Dump.tuple x |> print_endline ; []
+    and visit_stmtrs = function
+      | [] -> []
+      | hd :: tl -> visit_stmtr hd :: visit_stmtrs tl
+    in
+
+    let rec visit_stmttrnr = function 
+      | Node elt ->
+         (match (string_of_tag elt.tag_name) with
+           | "STMTRS" -> visit_stmtrs elt.node_contents
+           | "STATUS" -> []
+           | s -> print_endline s; assert false
+         )
+      | Kvp x -> Dump.tuple x |> print_endline ; []
+    and visit_stmttrnrs = function
+      | [] -> []
+      | hd :: tl -> visit_stmttrnr hd :: visit_stmttrnrs tl
+    in
+
+    let visit_bankmsgsrv1 = function
+      | [Node elt] ->
+         assert_tag_name elt "STMTTRNRS";
+        visit_stmttrnrs elt.node_contents
+      | _ -> assert false
+    in
+
+    let visit_ofx = function
+      | [Node discard; Node bankmsgsrv1;] ->
+         assert_tag_name bankmsgsrv1 "BANKMSGSRSV1";
+        visit_bankmsgsrv1 bankmsgsrv1.node_contents
+      | _ -> assert false
+    in
+
+    let visit_top = function
+      | Root_node n -> 
+         assert (string_of_tag n.tag_name = "OFX");
+         visit_ofx n.node_contents
+      | _ -> assert false;
+    in
+
+    let dump_node_contents = function
+      | _ -> print_endline "OOK"
+    in
+
+      try
+        let headers = parse Lexer.header_token in
+        let nodes = parse Lexer.token in
+          Dump.registry headers |> print_endline;
+          Dump.registry nodes |> print_endline;
+          visit_top nodes |> List.iter dump_node_contents
+      with Wrong_tag (o, e) ->
+        ("Observed: " ^ o ^ "; expected: " ^ e) |> print_endline
 
 let _ = 
 	match Sys.argv with

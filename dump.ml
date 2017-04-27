@@ -2,10 +2,12 @@
 open Ast
 open Printf
 
+let tuple (i, s) =
+  let i' = string_of_ident i in
+    sprintf "(%s . %s)" i' s
+
 let header = function
-  | Header (i, s) ->
-     let i' = string_of_ident i in
-       sprintf "(header %s %s)" i' s
+  | Header h -> tuple h
 
 let tag = function
   | Tag s     -> string_of_ident s |> sprintf "(tag %s)"
@@ -17,16 +19,11 @@ let map_car f xx =
 
 let rec registry = function
   | Headers hh -> map_car header hh
-
   | Eof -> "EOF"
-
   | Root_node n -> node n
 
 and node_contents = function
-  | Kvp (i, s) ->
-     let i' = string_of_ident i in
-       sprintf "(%s . %s)" i' s
-
+  | Kvp kvp -> tuple kvp
   | Node n -> node n
 
 and node node =
