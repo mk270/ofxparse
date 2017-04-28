@@ -38,11 +38,19 @@ let main debug =
         else raise (Wrong_tag (observed_name, expected_name))
     in
 
+    let transaction_of_node_contents = function
+      | [Kvp a; Kvp b; Kvp c; Kvp d; Kvp e] ->
+         Stmttrn.of_tuples a b c d e
+      | _ -> assert false
+    in
+
     let rec visit_banktran = function
       | Node elt ->
          (assert (string_of_tag elt.tag_name = "STMTTRN");
-          elt.node_contents)
-      | Kvp x -> Dump.tuple x |> print_endline ; []
+          print_endline "TRAN";
+          Banktranlist.Transaction
+            (transaction_of_node_contents elt.node_contents))
+      | Kvp x -> Banktranlist.parse_tuple x
     and visit_banktranlist = function
       | [] -> []
       | hd :: tl -> visit_banktran hd :: visit_banktranlist tl

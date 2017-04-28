@@ -3,7 +3,8 @@ TGT := ofxparse
 OCAMLC := ocamlc -annot -g -w Aez -warn-error A
 
 $(TGT): dump.cmo parser.cmo lexer.cmo main.ml
-	$(OCAMLC) -o $@ ast.ml dump.ml parser.ml lexer.ml main.ml
+	$(OCAMLC) -o $@ ast.ml dump.ml parser.ml lexer.ml \
+	                currency.ml stmttrn.ml banktranlist.ml main.ml
 
 lexer.ml: lexer.mll
 	ocamllex $<
