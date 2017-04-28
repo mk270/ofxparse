@@ -7,10 +7,25 @@ type t = {
   name : string;
 }
 
+exception Key_not_found of string * string
+
+let get_string expected_key = function
+  | (ident, s) -> let id = Ast.string_of_ident ident
+                  in
+                    if id = expected_key
+                    then s
+                    else raise (Key_not_found (id, expected_key))
+
+let get_trntype kvp = get_string "TRNTYPE" kvp
+let get_name kvp    = get_string "NAME" kvp
+let get_fitid kvp   = get_string "FITID" kvp
+let get_date kvp    = get_string "DTPOSTED" kvp
+let get_trnamt kvp  = get_string "TRNAMT" kvp
+
 let of_tuples a b c d e = {
-  trntype = "string";
-  dtposted = "string";
-  trnamt = Currency.of_string "-1324.10";
-  fitid = "string";
-  name = "string";
+  trntype = get_trntype a;
+  dtposted = get_date b;
+  trnamt = get_trnamt c |> Currency.of_string;
+  fitid = get_fitid d;
+  name = get_name e;
 }
