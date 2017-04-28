@@ -50,27 +50,31 @@ let main debug =
       | _ -> assert false
     in
 
-    let rec visit_banktran = function
-      | Node elt ->
-         (match (string_of_tag elt.tag_name) with
+    let visit_banktranlist contents_ =
+      let rec visit_banktran = function
+        | Node elt ->
+           (match (string_of_tag elt.tag_name) with
            | "STMTTRN" -> Banktranlist.Transaction
               (transaction_of_node_contents elt.node_contents)
            | s -> debug_log s; assert false)
-      | Kvp x -> Banktranlist.parse_tuple x
-    and visit_banktranlist = function
-      | [] -> []
-      | hd :: tl -> visit_banktran hd :: visit_banktranlist tl
+        | Kvp x -> Banktranlist.parse_tuple x
+      and visit_banktranlist = function
+        | [] -> []
+        | hd :: tl -> visit_banktran hd :: visit_banktranlist tl
+      in
+        visit_banktranlist contents_ |> Banktranlist.of_contents
     in
 
     let rec visit_stmtr = function
       | Node elt ->
          (match (string_of_tag elt.tag_name) with
-           | "BANKTRANLIST" -> visit_banktranlist elt.node_contents
+           | "BANKTRANLIST" -> Some (visit_banktranlist elt.node_contents)
            | "LEDGERBAL"
-           | "BANKACCTFROM" -> []
+           | "BANKACCTFROM" -> None
            | s -> debug_log s; assert false)
-      | Kvp x -> Dump.tuple x |> debug_log ; []
-    and visit_stmtrs = function
+      | Kvp x -> Dump.tuple x |> debug_log ; None
+    and visit_stmtrs : node_contents list -> Banktranlist.t option list =
+      function
       | [] -> []
       | hd :: tl -> visit_stmtr hd :: visit_stmtrs tl
     in

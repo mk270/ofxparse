@@ -17,3 +17,9 @@ let parse_tuple x =
     | "DTSTART" -> Start v
     | "DTEND" -> End v
     | _ -> assert false
+
+let of_contents id = {
+  dt_start = "none";
+  dt_end = "none";
+  transactions = [];
+}
