@@ -18,18 +18,23 @@ let parse_tuple x =
     | "DTEND" -> End v
     | _ -> assert false
 
+let find_component cc matcher extractor =
+  List.filter matcher cc |> extractor
+
 let find_start cc =
   let matcher = function
     | Start _ -> true
     | _ -> false
   in
-  let matched = List.filter matcher cc in
-    match matched with
+  let extractor = function
     | [Start s] -> s
+    | [] -> raise Not_found
     | _ -> assert false
+  in
+    find_component cc matcher extractor
 
 let of_contents components = 
-  let dt_start = "none" in
+  let dt_start = find_start components in
   let dt_end = "none" in
   let transactions = [] in
     {
