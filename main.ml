@@ -52,9 +52,10 @@ let main debug =
 
     let rec visit_banktran = function
       | Node elt ->
-         (assert (string_of_tag elt.tag_name = "STMTTRN");
-          Banktranlist.Transaction
-            (transaction_of_node_contents elt.node_contents))
+         (match (string_of_tag elt.tag_name) with
+           | "STMTTRN" -> Banktranlist.Transaction
+              (transaction_of_node_contents elt.node_contents)
+           | s -> debug_log s; assert false)
       | Kvp x -> Banktranlist.parse_tuple x
     and visit_banktranlist = function
       | [] -> []
