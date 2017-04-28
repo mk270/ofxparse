@@ -3,6 +3,12 @@ open Ast
 exception Wrong_tag of (string * string)
 
 let main debug =
+    let debug_log s =
+      if debug
+      then print_endline s
+      else ()
+    in
+
 	let _ = Parsing.set_trace debug in
 
 	let lexbuf = Lexing.from_channel stdin in
@@ -47,7 +53,6 @@ let main debug =
     let rec visit_banktran = function
       | Node elt ->
          (assert (string_of_tag elt.tag_name = "STMTTRN");
-          print_endline "TRAN";
           Banktranlist.Transaction
             (transaction_of_node_contents elt.node_contents))
       | Kvp x -> Banktranlist.parse_tuple x
@@ -62,8 +67,8 @@ let main debug =
            | "BANKTRANLIST" -> visit_banktranlist elt.node_contents
            | "LEDGERBAL"
            | "BANKACCTFROM" -> []
-           | s -> print_endline s; assert false)
-      | Kvp x -> Dump.tuple x |> print_endline ; []
+           | s -> debug_log s; assert false)
+      | Kvp x -> Dump.tuple x |> debug_log ; []
     and visit_stmtrs = function
       | [] -> []
       | hd :: tl -> visit_stmtr hd :: visit_stmtrs tl
@@ -74,9 +79,9 @@ let main debug =
          (match (string_of_tag elt.tag_name) with
            | "STMTRS" -> visit_stmtrs elt.node_contents
            | "STATUS" -> []
-           | s -> print_endline s; assert false
+           | s -> debug_log s; assert false
          )
-      | Kvp x -> Dump.tuple x |> print_endline ; []
+      | Kvp x -> Dump.tuple x |> debug_log ; []
     and visit_stmttrnrs = function
       | [] -> []
       | hd :: tl -> visit_stmttrnr hd :: visit_stmttrnrs tl
@@ -104,14 +109,14 @@ let main debug =
     in
 
     let dump_node_contents = function
-      | _ -> print_endline "OOK"
+      | _ -> debug_log "OOK"
     in
 
       try
         let headers = parse Lexer.header_token in
         let nodes = parse Lexer.token in
-          Dump.registry headers |> print_endline;
-          Dump.registry nodes |> print_endline;
+          Dump.registry headers |> debug_log;
+          Dump.registry nodes |> debug_log;
           visit_top nodes |> List.iter dump_node_contents
       with Wrong_tag (o, e) ->
         ("Observed: " ^ o ^ "; expected: " ^ e) |> print_endline
