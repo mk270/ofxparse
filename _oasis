@@ -1,0 +1,11 @@
+OASISFormat: 0.4
+Name:        ofxparse
+Version:     0.1
+Synopsis:    A parser for OFX file format
+Authors:     Martin Keegan
+License:     Apache-2.0
+Plugins:     META (0.4)
+Executable ofxparse
+  Path:       src
+  BuildTools: ocamlbuild
+  MainIs:     main.ml
