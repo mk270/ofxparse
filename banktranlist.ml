@@ -18,8 +18,22 @@ let parse_tuple x =
     | "DTEND" -> End v
     | _ -> assert false
 
-let of_contents id = {
-  dt_start = "none";
-  dt_end = "none";
-  transactions = [];
-}
+let find_start cc =
+  let matcher = function
+    | Start _ -> true
+    | _ -> false
+  in
+  let matched = List.filter matcher cc in
+    match matched with
+    | [Start s] -> s
+    | _ -> assert false
+
+let of_contents components = 
+  let dt_start = "none" in
+  let dt_end = "none" in
+  let transactions = [] in
+    {
+      dt_start = dt_start;
+      dt_end = dt_end;
+      transactions = transactions;
+    }
