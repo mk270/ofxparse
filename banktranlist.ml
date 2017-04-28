@@ -33,10 +33,31 @@ let find_start cc =
   in
     find_component cc matcher extractor
 
+let find_end cc =
+  let matcher = function
+    | End _ -> true
+    | _ -> false
+  in
+  let extractor = function
+    | [End s] -> s
+    | [] -> raise Not_found
+    | _ -> assert false
+  in
+    find_component cc matcher extractor
+
+let find_transactions =
+  List.filter (function | Transaction t -> true | _ -> false)
+
+let stmttrn_of_transaction = function
+  | Transaction t -> t
+  | _ -> assert false
+
 let of_contents components = 
   let dt_start = find_start components in
-  let dt_end = "none" in
-  let transactions = [] in
+  let dt_end = find_end components in
+  let transactions = find_transactions components |>
+      List.map stmttrn_of_transaction
+  in
     {
       dt_start = dt_start;
       dt_end = dt_end;
