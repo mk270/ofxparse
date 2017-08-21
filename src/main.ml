@@ -61,12 +61,13 @@ let main debug =
 
     let visit_banktranlist contents_ =
       let rec visit_banktran = function
-        | Node elt ->
-           (match (string_of_tag elt.tag_name) with
-           | "STMTTRN" -> Banktranlist.Transaction
-              (transaction_of_node_contents elt.node_contents)
-           | s -> debug_log s; assert false)
+        | Node elt -> string_of_tag elt.tag_name |>
+            handle_banktran elt.node_contents
         | Kvp x -> Banktranlist.parse_tuple x
+      and handle_banktran contents = function
+        | "STMTTRN" -> Banktranlist.Transaction
+           (transaction_of_node_contents contents)
+        | s -> debug_log s; assert false
       and visit_banktranlist = function
         | [] -> []
         | hd :: tl -> visit_banktran hd :: visit_banktranlist tl
@@ -129,8 +130,9 @@ let main debug =
       try
         let headers = parse Lexer.header_token in
         let nodes = parse Lexer.token in
-          Dump.registry headers |> debug_log;
-          Dump.registry nodes |> debug_log;
+          ignore headers;
+          (* Dump.registry headers |> debug_log;
+          Dump.registry nodes |> debug_log; *)
           visit_top nodes |> List.iter dump_node_contents
       with Wrong_tag (o, e) ->
         ("Observed: " ^ o ^ "; expected: " ^ e) |> print_endline
