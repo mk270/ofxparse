@@ -8,4 +8,10 @@ parser.ml
 parser.mli
 keywords.ml
 data/
-
+*.byte
+setup.data
+setup.log
+setup.ml
+myocamlbuild.ml
+_tags
+_build/
