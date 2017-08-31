@@ -26,14 +26,14 @@ let main debug =
 		let pos = lexbuf.Lexing.lex_curr_p in
 		let lnum = pos.Lexing.pos_lnum in
 		let cnum = pos.Lexing.pos_cnum in
-		let lexeme = Lexing.lexeme lexbuf in 
-		Printf.printf "line: %d, byte: %d, `%s'\n" 
+		let lexeme = Lexing.lexeme lexbuf in
+		Printf.printf "line: %d, byte: %d, `%s'\n"
 			lnum cnum lexeme
 	in
 
-	let parse lx = 
+	let parse lx =
 		try Parser.input lx lexbuf
-		with 
+		with
 		| Failure f ->
 			report_lex ();
 			print_endline f;
@@ -89,7 +89,7 @@ let main debug =
       | hd :: tl -> visit_stmtr hd :: visit_stmtrs tl
     in
 
-    let rec visit_stmttrnr = function 
+    let rec visit_stmttrnr = function
       | Node elt ->
          (match (string_of_tag elt.tag_name) with
            | "STMTRS" -> visit_stmtrs elt.node_contents
@@ -117,7 +117,7 @@ let main debug =
     in
 
     let visit_top = function
-      | Root_node n -> 
+      | Root_node n ->
          assert (string_of_tag n.tag_name = "OFX");
          visit_ofx n.node_contents
       | _ -> assert false;
@@ -137,11 +137,11 @@ let main debug =
       with Wrong_tag (o, e) ->
         ("Observed: " ^ o ^ "; expected: " ^ e) |> print_endline
 
-let _ = 
+let _ =
   let debug = ref false in
   let arg_specs = [
       ("--debug", Arg.Set debug, "Debug mode")
-    ] 
+    ]
   in
   let usage = "No usage message specified yet" in
   let anon = fun s -> assert false in
