@@ -138,6 +138,12 @@ let main debug =
         ("Observed: " ^ o ^ "; expected: " ^ e) |> print_endline
 
 let _ = 
-	match Sys.argv with
-	| [| progname; "--debug" |] -> main true
-	| _                         -> main false
+  let debug = ref false in
+  let arg_specs = [
+      ("--debug", Arg.Set debug, "Debug mode")
+    ] 
+  in
+  let usage = "No usage message specified yet" in
+  let anon = fun s -> assert false in
+    Arg.parse arg_specs anon usage;
+    main !debug
