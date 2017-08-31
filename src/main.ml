@@ -18,34 +18,6 @@ let main debug =
       else ()
     in
 
-    let _ = Parsing.set_trace debug in
-
-    let lexbuf = Lexing.from_channel stdin in
-
-    let report_lex () =
-        let pos = lexbuf.Lexing.lex_curr_p in
-        let lnum = pos.Lexing.pos_lnum in
-        let cnum = pos.Lexing.pos_cnum in
-        let lexeme = Lexing.lexeme lexbuf in
-        Printf.printf "line: %d, byte: %d, `%s'\n"
-            lnum cnum lexeme
-    in
-
-    let parse lx =
-        try Parser.input lx lexbuf
-        with
-        | Failure f ->
-            report_lex ();
-            print_endline f;
-            failwith f
-        | Parsing.Parse_error ->
-            report_lex ();
-            failwith "parse error"
-        | Lexer.Unexpected_token ->
-            report_lex ();
-            failwith "lexer error"
-    in
-
     let assert_tag_name node expected_name =
       let observed_name = string_of_tag node.tag_name in
         if observed_name = expected_name
@@ -128,8 +100,8 @@ let main debug =
     in
 
       try
-        let headers = parse Lexer.header_token in
-        let nodes = parse Lexer.token in
+        let headers = Parse_ofx.parse Lexer.header_token debug in
+        let nodes = Parse_ofx.parse Lexer.token debug in
           ignore headers;
           (* Dump.registry headers |> debug_log;
           Dump.registry nodes |> debug_log; *)
