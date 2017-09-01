@@ -95,8 +95,12 @@ let main debug dump_start =
     | _ -> assert false;
   in
 
-  let dump_node_contents = function
-    | _ -> debug_log "OOK"
+  let rec dump_node_contents = function
+    | [] -> ()
+    | None :: tl -> dump_node_contents tl
+    | Some hd :: tl -> 
+       Banktranlist.to_string hd |> print_endline;
+       dump_node_contents tl  
   in
 
     try

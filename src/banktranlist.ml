@@ -74,3 +74,6 @@ let of_contents components =
       dt_end = dt_end;
       transactions = transactions;
     }
+
+let to_string btl =
+  "BTL (started: " ^ btl.dt_start ^ ")"
