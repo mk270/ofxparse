@@ -98,9 +98,9 @@ let main debug dump_start =
   let rec dump_node_contents = function
     | [] -> ()
     | None :: tl -> dump_node_contents tl
-    | Some hd :: tl -> 
+    | Some hd :: tl ->
        Banktranlist.to_string hd |> print_endline;
-       dump_node_contents tl  
+       dump_node_contents tl
   in
 
     try
