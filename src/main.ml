@@ -37,7 +37,7 @@ let main debug dump_start =
           handle_banktran elt.node_contents
       | Kvp x -> Banktranlist.parse_tuple x
     and handle_banktran contents = function
-      | "STMTTRN" -> Banktranlist.Transaction
+      | "STMTTRN" -> Banktranlist.make_transaction
          (transaction_of_node_contents contents)
       | s -> debug_log s; assert false
     and visit_banktranlist = function
@@ -99,7 +99,7 @@ let main debug dump_start =
     | [] -> ()
     | None :: tl -> dump_node_contents tl
     | Some hd :: tl ->
-       Banktranlist.to_string hd |> print_endline;
+       Banktranlist.dump_start hd |> print_endline;
        dump_node_contents tl
   in
 
@@ -109,7 +109,9 @@ let main debug dump_start =
         ignore headers;
         (* Dump.registry headers |> debug_log;
         Dump.registry nodes |> debug_log; *)
-        visit_top nodes |> List.iter dump_node_contents
+        if dump_start
+        then visit_top nodes |> List.iter dump_node_contents
+        else ()
     with Wrong_tag (o, e) ->
       ("Observed: " ^ o ^ "; expected: " ^ e) |> print_endline
 

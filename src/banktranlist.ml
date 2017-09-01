@@ -29,6 +29,9 @@ let parse_tuple x =
     | "DTEND" -> End (parse_date v)
     | _ -> assert false
 
+let make_transaction trn =
+  Transaction trn
+
 let find_component cc matcher extractor =
   List.filter matcher cc |> extractor
 
@@ -77,3 +80,6 @@ let of_contents components =
 
 let to_string btl =
   "BTL (started: " ^ btl.dt_start ^ ")"
+
+let dump_start btl =
+  btl.dt_start
