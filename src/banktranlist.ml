@@ -18,12 +18,15 @@ type component =
   | End of string
   | Transaction of Stmttrn.t
 
+let parse_date s =
+  String.sub (String.trim s) 0 8
+
 let parse_tuple x =
   let id, v = x in
   let ide = Ast.string_of_ident id in
     match ide with
-    | "DTSTART" -> Start v
-    | "DTEND" -> End v
+    | "DTSTART" -> Start (parse_date v)
+    | "DTEND" -> End (parse_date v)
     | _ -> assert false
 
 let find_component cc matcher extractor =
