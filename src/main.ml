@@ -11,10 +11,10 @@ open Ast
 
 exception Wrong_tag of (string * string)
 
-let main debug =
+let main debug dump_start =
   let debug_log s =
     if debug
-    then print_endline s
+    then Printf.fprintf stderr "%s" s
     else ()
   in
 
@@ -111,11 +111,13 @@ let main debug =
 
 let _ =
   let debug = ref false in
+  let dump_start = ref false in
   let arg_specs = [
-      ("--debug", Arg.Set debug, "Debug mode")
+      ("--debug", Arg.Set debug, "Debug mode");
+      ("--dump-start", Arg.Set dump_start, "Dump start date of file");
     ]
   in
   let usage = "No usage message specified yet" in
   let anon = fun s -> assert false in
     Arg.parse arg_specs anon usage;
-    main !debug
+    main !debug !dump_start
