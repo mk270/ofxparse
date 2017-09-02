@@ -11,7 +11,7 @@ open Ast
 
 exception Wrong_tag of (string * string)
 
-let main debug dump_start =
+let main debug dump_time_range dump_trans =
   let debug_log s =
     if debug
     then Printf.fprintf stderr "%s" s
@@ -99,7 +99,13 @@ let main debug dump_start =
     | [] -> ()
     | None :: tl -> dump_node_contents tl
     | Some hd :: tl ->
-       Banktranlist.dump_start hd |> print_endline;
+       (match (dump_time_range, dump_trans) with
+        | true, true -> assert false
+        | true, false ->
+           Banktranlist.dump_time_range hd |> print_endline
+        | false, true ->
+           Banktranlist.dump_transactions hd |> print_endline
+        | false, false -> ());
        dump_node_contents tl
   in
 
@@ -109,21 +115,21 @@ let main debug dump_start =
         ignore headers;
         (* Dump.registry headers |> debug_log;
         Dump.registry nodes |> debug_log; *)
-        if dump_start
-        then visit_top nodes |> List.iter dump_node_contents
-        else ()
+        visit_top nodes |> List.iter dump_node_contents
     with Wrong_tag (o, e) ->
       ("Observed: " ^ o ^ "; expected: " ^ e) |> print_endline
 
 let _ =
   let debug = ref false in
-  let dump_start = ref false in
+  let dump_time_range = ref false in
+  let dump_trans = ref false in
   let arg_specs = [
       ("--debug", Arg.Set debug, "Debug mode");
-      ("--dump-start", Arg.Set dump_start, "Dump start date of file");
+      ("--dump-time-range", Arg.Set dump_time_range, "Dump time range of file");
+      ("--dump-transactions", Arg.Set dump_trans, "Dump transactions");
     ]
   in
   let usage = "No usage message specified yet" in
   let anon = fun s -> assert false in
     Arg.parse arg_specs anon usage;
-    main !debug !dump_start
+    main !debug !dump_time_range !dump_trans

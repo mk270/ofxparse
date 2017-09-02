@@ -83,3 +83,13 @@ let to_string btl =
 
 let dump_start btl =
   btl.dt_start
+
+let dump_time_range btl =
+  btl.dt_start ^ "_" ^ btl.dt_end
+
+let dump_transactions btl =
+  let count = List.length btl.transactions in
+  let trns = List.map Stmttrn.string_of_stmttrn btl.transactions |>
+               List.fold_left (^) ""
+  in
+    "no trans info: " ^ (string_of_int count) ^ " transaction(s)" ^ trns
