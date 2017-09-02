@@ -24,11 +24,11 @@ let get_string expected_key = function
                     then s
                     else raise (Key_not_found (id, expected_key))
 
-let get_trntype kvp = get_string "TRNTYPE" kvp
-let get_name kvp    = get_string "NAME" kvp
-let get_fitid kvp   = get_string "FITID" kvp
-let get_date kvp    = get_string "DTPOSTED" kvp
-let get_trnamt kvp  = get_string "TRNAMT" kvp
+let get_trntype kvp = get_string "TRNTYPE" kvp  |> String.trim
+let get_name kvp    = get_string "NAME" kvp     |> String.trim
+let get_fitid kvp   = get_string "FITID" kvp    |> String.trim
+let get_date kvp    = get_string "DTPOSTED" kvp |> String.trim
+let get_trnamt kvp  = get_string "TRNAMT" kvp   |> String.trim
 
 let of_tuples a b c d e = {
   trntype = get_trntype a;
