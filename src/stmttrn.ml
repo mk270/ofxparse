@@ -37,3 +37,14 @@ let of_tuples a b c d e = {
   fitid = get_fitid d;
   name = get_name e;
 }
+
+let string_of_stmttrn trn =
+  List.fold_left (^) "" [
+    "(";
+    trn.fitid;
+    " ";
+    trn.dtposted;
+    ": ";
+    trn.name;
+    ")"
+  ]
