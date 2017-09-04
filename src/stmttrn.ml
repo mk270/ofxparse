@@ -58,6 +58,8 @@ let string_of_stmttrn trn =
     " ";
     trn.trntype;
     ": ";
+    Currency.to_string trn.trnamt;
+    " :: ";
     trn.name;
     ")"
   ]

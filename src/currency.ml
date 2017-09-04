@@ -27,3 +27,6 @@ let of_string s =
         whole = w;
         dec = 0;
       }
+
+let to_string c =
+  Printf.sprintf "%d.%02d" c.whole c.dec
