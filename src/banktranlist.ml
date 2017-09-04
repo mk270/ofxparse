@@ -85,8 +85,4 @@ let dump_time_range btl =
   (Timestamp.to_string btl.dt_start) ^ "_" ^ (Timestamp.to_string btl.dt_end)
 
 let dump_transactions btl =
-  let count = List.length btl.transactions in
-  let trns = List.map Stmttrn.string_of_stmttrn btl.transactions |>
-               List.fold_left (^) ""
-  in
-    "no trans info: " ^ (string_of_int count) ^ " transaction(s)" ^ trns
+  List.map Stmttrn.string_of_stmttrn btl.transactions

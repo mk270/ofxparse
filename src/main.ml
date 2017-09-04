@@ -104,7 +104,7 @@ let main debug dump_time_range dump_trans =
         | true, false ->
            Banktranlist.dump_time_range hd |> print_endline
         | false, true ->
-           Banktranlist.dump_transactions hd |> print_endline
+           Banktranlist.dump_transactions hd |> List.iter print_endline
         | false, false -> ());
        dump_node_contents tl
   in
