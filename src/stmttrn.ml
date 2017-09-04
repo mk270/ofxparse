@@ -31,20 +31,32 @@ let get_trnamt kvp  = get_string "TRNAMT" kvp   |> String.trim
 let get_date kvp    = get_string "DTPOSTED" kvp |> String.trim |>
                         Timestamp.of_string
 
-let of_tuples a b c d e = {
-  trntype = get_trntype a;
-  dtposted = get_date b;
-  trnamt = get_trnamt c |> Currency.of_string;
-  fitid = get_fitid d;
-  name = get_name e;
-}
+let of_tuples a b c d e = 
+  let trntype = get_trntype a in
+    (match trntype with
+     | "DIRECTDEBIT"
+     | "PAYMENT"
+     | "OTHER"
+     | "REPEATPMT"
+     | "DIRECTDEP"
+     | "CASH" -> ()
+     | _ -> print_endline trntype; assert false);
+    {
+      trntype = trntype;
+      dtposted = get_date b;
+      trnamt = get_trnamt c |> Currency.of_string;
+      fitid = get_fitid d;
+      name = get_name e;
+    }
 
 let string_of_stmttrn trn =
   List.fold_left (^) "" [
-    "(";
+    "([";
     trn.fitid;
-    " ";
+    "] ";
     Timestamp.to_string trn.dtposted;
+    " ";
+    trn.trntype;
     ": ";
     trn.name;
     ")"
