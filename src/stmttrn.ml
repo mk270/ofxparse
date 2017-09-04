@@ -31,7 +31,7 @@ let get_trnamt kvp  = get_string "TRNAMT" kvp   |> String.trim
 let get_date kvp    = get_string "DTPOSTED" kvp |> String.trim |>
                         Timestamp.of_string
 
-let of_tuples a b c d e = 
+let of_tuples a b c d e =
   let trntype = get_trntype a in
     (match trntype with
      | "DIRECTDEBIT"
