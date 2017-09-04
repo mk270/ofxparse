@@ -9,7 +9,7 @@
 
 type t = {
   trntype : string;
-  dtposted : string;
+  dtposted : Timestamp.t;
   trnamt : Currency.t;
   fitid : string;
   name : string;
@@ -27,8 +27,9 @@ let get_string expected_key = function
 let get_trntype kvp = get_string "TRNTYPE" kvp  |> String.trim
 let get_name kvp    = get_string "NAME" kvp     |> String.trim
 let get_fitid kvp   = get_string "FITID" kvp    |> String.trim
-let get_date kvp    = get_string "DTPOSTED" kvp |> String.trim
 let get_trnamt kvp  = get_string "TRNAMT" kvp   |> String.trim
+let get_date kvp    = get_string "DTPOSTED" kvp |> String.trim |>
+                        Timestamp.of_string
 
 let of_tuples a b c d e = {
   trntype = get_trntype a;
@@ -43,7 +44,7 @@ let string_of_stmttrn trn =
     "(";
     trn.fitid;
     " ";
-    trn.dtposted;
+    Timestamp.to_string trn.dtposted;
     ": ";
     trn.name;
     ")"
