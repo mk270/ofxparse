@@ -8,8 +8,8 @@
 *)
 
 type t = {
-  dt_start : string;
-  dt_end : string;
+  dt_start : Timestamp.t;
+  dt_end : Timestamp.t;
   transactions : Stmttrn.t list
 }
 
@@ -18,15 +18,12 @@ type component =
   | End of string
   | Transaction of Stmttrn.t
 
-let parse_date s =
-  String.sub (String.trim s) 0 8
-
 let parse_tuple x =
   let id, v = x in
   let ide = Ast.string_of_ident id in
     match ide with
-    | "DTSTART" -> Start (parse_date v)
-    | "DTEND" -> End (parse_date v)
+    | "DTSTART" -> Start (String.trim v)
+    | "DTEND" -> End (String.trim v)
     | _ -> assert false
 
 let make_transaction trn =
@@ -73,19 +70,19 @@ let of_contents components =
       List.map stmttrn_of_transaction
   in
     {
-      dt_start = dt_start;
-      dt_end = dt_end;
+      dt_start = Timestamp.of_string dt_start;
+      dt_end = Timestamp.of_string dt_end;
       transactions = transactions;
     }
 
 let to_string btl =
-  "BTL (started: " ^ btl.dt_start ^ ")"
+  "BTL (started: " ^ (Timestamp.to_string btl.dt_start) ^ ")"
 
 let dump_start btl =
-  btl.dt_start
+  Timestamp.to_string btl.dt_start
 
 let dump_time_range btl =
-  btl.dt_start ^ "_" ^ btl.dt_end
+  (Timestamp.to_string btl.dt_start) ^ "_" ^ (Timestamp.to_string btl.dt_end)
 
 let dump_transactions btl =
   let count = List.length btl.transactions in
