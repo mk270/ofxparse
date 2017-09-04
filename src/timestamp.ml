@@ -25,4 +25,7 @@ let of_string s =
       tz   = tz;
     }
 
-let to_string ts = ts.date
+let to_string ts = 
+  (String.sub ts.date 0 4) ^ "-" ^
+  (String.sub ts.date 4 2) ^ "-" ^
+  (String.sub ts.date 6 2)
