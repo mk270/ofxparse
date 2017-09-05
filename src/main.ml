@@ -11,7 +11,7 @@ open Ast
 
 exception Wrong_tag of (string * string)
 
-let main input_channel debug dump_time_range dump_trans =
+let main nodes debug dump_time_range dump_trans =
   let debug_log s =
     if debug
     then Printf.fprintf stderr "%s" s
@@ -108,17 +108,22 @@ let main input_channel debug dump_time_range dump_trans =
         | false, false -> ());
        dump_node_contents tl
   in
+    (* Dump.registry headers |> debug_log;
+       Dump.registry nodes |> debug_log; *)
+    visit_top nodes |> List.iter dump_node_contents
 
-    try
-      let lexbuf = Lexing.from_channel input_channel in
-      let headers = Parse_ofx.parse Lexer.header_token lexbuf debug in
-      let nodes = Parse_ofx.parse Lexer.token lexbuf debug in
-        ignore headers;
-        (* Dump.registry headers |> debug_log;
-        Dump.registry nodes |> debug_log; *)
-        visit_top nodes |> List.iter dump_node_contents
+let nodes_of_channel input_channel debug =
+  try
+    let lexbuf = Lexing.from_channel input_channel in
+    let headers = Parse_ofx.parse Lexer.header_token lexbuf debug in
+    let nodes = Parse_ofx.parse Lexer.token lexbuf debug in
+      ignore headers;
+      nodes
     with Wrong_tag (o, e) ->
-      ("Observed: " ^ o ^ "; expected: " ^ e) |> print_endline
+      (
+        ("Observed: " ^ o ^ "; expected: " ^ e) |> print_endline;
+        raise (Wrong_tag (o, e))
+      )
 
 let _ =
   let filenames = ref (Array.make 0 "") in
@@ -136,4 +141,5 @@ let _ =
     filenames := Array.append !filenames [| s |]
   in
     Arg.parse arg_specs anon usage;
-    main stdin !debug !dump_time_range !dump_trans
+    let nodes = nodes_of_channel stdin !debug in
+      main nodes !debug !dump_time_range !dump_trans
