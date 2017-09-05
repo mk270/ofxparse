@@ -19,7 +19,7 @@ let main debug dump_time_range dump_trans =
   in
 
   let assert_tag_name node expected_name =
-    let observed_name = string_of_tag node.tag_name in
+    let observed_name = string_of_node_tag_name node in
       if observed_name = expected_name
       then ()
       else raise (Wrong_tag (observed_name, expected_name))
@@ -33,7 +33,7 @@ let main debug dump_time_range dump_trans =
 
   let visit_banktranlist contents_ =
     let rec visit_banktran = function
-      | Node elt -> string_of_tag elt.tag_name |>
+      | Node elt -> string_of_node_tag_name elt |>
           handle_banktran elt.node_contents
       | Kvp x -> Banktranlist.parse_tuple x
     and handle_banktran contents = function
@@ -49,12 +49,12 @@ let main debug dump_time_range dump_trans =
 
   let rec visit_stmtr = function
     | Node elt ->
-       (match (string_of_tag elt.tag_name) with
+       (match (string_of_node_tag_name elt) with
          | "BANKTRANLIST" -> Some (visit_banktranlist elt.node_contents)
          | "LEDGERBAL"
          | "BANKACCTFROM" -> None
          | s -> debug_log s; assert false)
-    | Kvp x -> Dump.tuple x |> debug_log ; None
+    | Kvp x -> Ast.Dump.tuple x |> debug_log ; None
   and visit_stmtrs : node_contents list -> Banktranlist.t option list =
     function
     | [] -> []
@@ -68,7 +68,7 @@ let main debug dump_time_range dump_trans =
          | "STATUS" -> []
          | s -> debug_log s; assert false
        )
-    | Kvp x -> Dump.tuple x |> debug_log ; []
+    | Kvp x -> Ast.Dump.tuple x |> debug_log ; []
   and visit_stmttrnrs = function
     | [] -> []
     | hd :: tl -> visit_stmttrnr hd :: visit_stmttrnrs tl

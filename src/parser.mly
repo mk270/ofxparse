@@ -13,13 +13,6 @@ open Ast
 
 let parse_error s = Printf.printf "Parse error: %s\n" s
 
-let tags_match t1 t2 =
-  let string_of_tag = function
-    | Tag i -> string_of_ident i
-    | End_tag i -> string_of_ident i
-  in
-    string_of_tag t1 = string_of_tag t2
-
 %}
 
 /* Ocamlyacc Declarations */
@@ -48,10 +41,10 @@ headers:
    | header headers { $1 :: $2 }
 ;
 header:
-   | ident cdata_header { Header ($1, $2) }
+   | ident cdata_header { header ($1, $2) }
 ;
 ident:
-   | IDENTIFIER { Ident $1 }
+   | IDENTIFIER { ident $1 }
 ;
 node:
    | open_tag node_contents close_tag { 
@@ -60,16 +53,16 @@ node:
    }
 ;
 open_tag:
-   | TAG GT    { Tag     (Ident $1) }
+   | TAG GT    { tag     (ident $1) }
 ;
 close_tag:
-   | ENDTAG GT { End_tag (Ident $1) }
+   | ENDTAG GT { end_tag (ident $1) }
 ;
 cdata_header:
    | HEADER_DATA { $1 }
 ;
 unclosed_node:
-   | TAG GT CDATA { Kvp (Ident $1, $3) }
+   | TAG GT CDATA { Kvp (ident $1, $3) }
 ;
 
 node_contents:
