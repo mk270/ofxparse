@@ -141,5 +141,29 @@ let _ =
     filenames := Array.append !filenames [| s |]
   in
     Arg.parse arg_specs anon usage;
-    let nodes = nodes_of_channel stdin !debug in
-      main nodes !debug !dump_time_range !dump_trans
+
+    match !filenames with
+    | [| |] ->
+       let nodes = nodes_of_channel stdin !debug in
+         main nodes !debug !dump_time_range !dump_trans
+
+    | [| f |] ->
+       (let ic = open_in_bin f in
+          try let nodes = nodes_of_channel ic !debug in
+                main nodes !debug !dump_time_range !dump_trans;
+                close_in ic
+          with e ->
+            close_in_noerr ic;
+            raise e
+       );
+
+    | ff ->
+       Array.iter (fun f ->
+           let ic = open_in_bin f in
+             try let nodes = nodes_of_channel ic !debug in
+                   main nodes !debug !dump_time_range !dump_trans;
+                   close_in ic
+             with e ->
+               close_in_noerr ic;
+               raise e
+         ) ff
