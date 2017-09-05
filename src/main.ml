@@ -119,10 +119,10 @@ let nodes_of_channel input_channel debug =
     let nodes = Parse_ofx.parse Lexer.token lexbuf debug in
       ignore headers;
       nodes
-    with Wrong_tag (o, e) ->
+    with Wrong_tag (o, e) as exc ->
       (
         ("Observed: " ^ o ^ "; expected: " ^ e) |> print_endline;
-        raise (Wrong_tag (o, e))
+        raise exc
       )
 
 let _ =
