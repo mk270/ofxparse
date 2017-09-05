@@ -120,6 +120,7 @@ let main debug dump_time_range dump_trans =
       ("Observed: " ^ o ^ "; expected: " ^ e) |> print_endline
 
 let _ =
+  let filenames = ref (Array.make 0 "") in
   let debug = ref false in
   let dump_time_range = ref false in
   let dump_trans = ref false in
@@ -130,6 +131,8 @@ let _ =
     ]
   in
   let usage = "No usage message specified yet" in
-  let anon = fun s -> assert false in
+  let anon = fun s ->
+    filenames := Array.append !filenames [| s |]
+  in
     Arg.parse arg_specs anon usage;
     main !debug !dump_time_range !dump_trans
