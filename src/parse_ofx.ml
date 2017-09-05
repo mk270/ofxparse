@@ -9,9 +9,7 @@
 
 open Ast
 
-let lexbuf = Lexing.from_channel stdin
-
-let report_lex () =
+let report_lex lexbuf =
     let pos = lexbuf.Lexing.lex_curr_p in
     let lnum = pos.Lexing.pos_lnum in
     let cnum = pos.Lexing.pos_cnum in
@@ -19,18 +17,20 @@ let report_lex () =
     Printf.printf "line: %d, byte: %d, `%s'\n"
         lnum cnum lexeme
 
+let lexbuf = Lexing.from_channel stdin
+
 let parse lx debug =
     let _ = Parsing.set_trace debug in
 
     try Parser.input lx lexbuf
     with
     | Failure f ->
-        report_lex ();
+        report_lex lexbuf;
         print_endline f;
         failwith f
     | Parsing.Parse_error ->
-        report_lex ();
+        report_lex lexbuf;
         failwith "parse error"
     | Lexer.Unexpected_token ->
-        report_lex ();
+        report_lex lexbuf;
         failwith "lexer error"
