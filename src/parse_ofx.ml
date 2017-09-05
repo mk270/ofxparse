@@ -17,11 +17,7 @@ let report_lex lexbuf =
     Printf.printf "line: %d, byte: %d, `%s'\n"
         lnum cnum lexeme
 
-let lexbuf = Lexing.from_channel stdin
-
-let parse lx debug =
-    let _ = Parsing.set_trace debug in
-
+let parse lx lexbuf debug =
     try Parser.input lx lexbuf
     with
     | Failure f ->

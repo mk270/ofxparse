@@ -7,5 +7,5 @@
   it under the terms of the Apache Licence v2.0.
 *)
 
-val parse : (Lexing.lexbuf -> Parser.token) -> bool -> Ast.t
+val parse : (Lexing.lexbuf -> Parser.token) -> Lexing.lexbuf -> bool -> Ast.t
 

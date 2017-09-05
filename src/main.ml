@@ -110,8 +110,9 @@ let main debug dump_time_range dump_trans =
   in
 
     try
-      let headers = Parse_ofx.parse Lexer.header_token debug in
-      let nodes = Parse_ofx.parse Lexer.token debug in
+      let lexbuf = Lexing.from_channel stdin in
+      let headers = Parse_ofx.parse Lexer.header_token lexbuf debug in
+      let nodes = Parse_ofx.parse Lexer.token lexbuf debug in
         ignore headers;
         (* Dump.registry headers |> debug_log;
         Dump.registry nodes |> debug_log; *)
