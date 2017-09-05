@@ -7,17 +7,8 @@
   it under the terms of the Apache Licence v2.0.
 *)
 
-type trntype =
-  | DIRECTDEBIT
-  | PAYMENT
-  | OTHER
-  | REPEATPMT
-  | DIRECTDEP
-  | CASH
-  | MATCHFAILURE
-
 type t = {
-  trntype : trntype;
+  trntype : Trntype.t;
   dtposted : Timestamp.t;
   trnamt : Currency.t;
   fitid : string;
@@ -25,24 +16,6 @@ type t = {
 }
 
 exception Key_not_found of string * string
-
-let trntype_of_string = function
-  | "DIRECTDEBIT" -> DIRECTDEBIT
-  | "PAYMENT" -> PAYMENT
-  | "OTHER" -> OTHER
-  | "REPEATPMT" -> REPEATPMT
-  | "DIRECTDEP" -> DIRECTDEP
-  | "CASH" -> CASH
-  | _ -> MATCHFAILURE
-
-let string_of_trntype = function
-  | DIRECTDEBIT -> "DIRECTDEBIT"
-  | PAYMENT -> "PAYMENT"
-  | OTHER -> "OTHER"
-  | REPEATPMT -> "REPEATPMT"
-  | DIRECTDEP -> "DIRECTDEP"
-  | CASH -> "CASH"
-  | _ -> assert false
 
 let get_string' expected_key = function
   | (ident, s) -> let id = Ast.string_of_ident ident
@@ -57,7 +30,7 @@ let get_string expected_key kvp =
 let get_name kvp    = get_string "NAME" kvp
 let get_fitid kvp   = get_string "FITID" kvp
 let get_trnamt kvp  = get_string "TRNAMT" kvp
-let get_trntype kvp = get_string "TRNTYPE" kvp |> trntype_of_string
+let get_trntype kvp = get_string "TRNTYPE" kvp |> Trntype.trntype_of_string
 let get_date kvp    = get_string "DTPOSTED" kvp |> Timestamp.of_string
 
 let of_tuples a b c d e =
@@ -76,7 +49,7 @@ let string_of_stmttrn trn =
     "] ";
     Timestamp.to_string trn.dtposted;
     " ";
-    string_of_trntype trn.trntype;
+    Trntype.string_of_trntype trn.trntype;
     ": ";
     Currency.to_string trn.trnamt;
     " :: ";
