@@ -125,6 +125,16 @@ let nodes_of_channel input_channel debug =
         raise exc
       )
 
+let nodes_of_filename filename debug =
+  let ic = open_in_bin filename in
+    try let nodes = nodes_of_channel ic debug in
+          main nodes debug false false;
+          close_in ic;
+          nodes
+  with exc ->
+       close_in_noerr ic;
+       raise exc
+
 let _ =
   let filenames = ref (Array.make 0 "") in
   let debug = ref false in
@@ -142,28 +152,19 @@ let _ =
   in
     Arg.parse arg_specs anon usage;
 
-    match !filenames with
-    | [| |] ->
+    match (!filenames, !dump_time_range, !dump_trans) with
+    | [| |], _, _ ->
        let nodes = nodes_of_channel stdin !debug in
          main nodes !debug !dump_time_range !dump_trans
 
-    | [| f |] ->
-       (let ic = open_in_bin f in
-          try let nodes = nodes_of_channel ic !debug in
-                main nodes !debug !dump_time_range !dump_trans;
-                close_in ic
-          with e ->
-            close_in_noerr ic;
-            raise e
-       );
+    | [| f |], false, false ->
+       ignore (nodes_of_filename f !debug)
 
-    | ff ->
+    | ff, false, false ->
        Array.iter (fun f ->
-           let ic = open_in_bin f in
-             try let nodes = nodes_of_channel ic !debug in
-                   main nodes !debug !dump_time_range !dump_trans;
-                   close_in ic
-             with e ->
-               close_in_noerr ic;
-               raise e
+           ignore (nodes_of_filename f !debug)
          ) ff
+
+    | _, true, _
+    | _, _, true
+      -> assert false
