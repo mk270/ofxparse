@@ -11,7 +11,7 @@ open Ast
 
 exception Wrong_tag of (string * string)
 
-let main debug dump_time_range dump_trans =
+let main input_channel debug dump_time_range dump_trans =
   let debug_log s =
     if debug
     then Printf.fprintf stderr "%s" s
@@ -110,7 +110,7 @@ let main debug dump_time_range dump_trans =
   in
 
     try
-      let lexbuf = Lexing.from_channel stdin in
+      let lexbuf = Lexing.from_channel input_channel in
       let headers = Parse_ofx.parse Lexer.header_token lexbuf debug in
       let nodes = Parse_ofx.parse Lexer.token lexbuf debug in
         ignore headers;
@@ -136,4 +136,4 @@ let _ =
     filenames := Array.append !filenames [| s |]
   in
     Arg.parse arg_specs anon usage;
-    main !debug !dump_time_range !dump_trans
+    main stdin !debug !dump_time_range !dump_trans
